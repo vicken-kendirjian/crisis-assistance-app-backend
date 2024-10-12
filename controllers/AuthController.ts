@@ -9,6 +9,7 @@ import { sendOtp } from '../utility/TwilioUtility';
 
 
 
+
 export const userSignup = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -129,11 +130,13 @@ export const userLogin = async (req: Request, res: Response) => {
     user.refreshToken = refreshToken;
     await user.save();
 
+    //req.userId = user._id.toString();
+    res.setHeader('access-token', accessToken);
+    console.log("From LOGIN: "+accessToken)
     //Return access token to the frontend
     return res.status(200).json({
-      accessToken,
       user: {
-        id: user._id,
+        _id: user._id,
         phone: user.phone,
         name: user.name,
         lastname: user.lastname
@@ -144,3 +147,7 @@ export const userLogin = async (req: Request, res: Response) => {
     return res.status(500).json({ msg: 'Server error' });
   }
 };
+
+export const testCall = async (req: Request, res: Response) => {
+  res.status(200).json({msg: "Good to go boiii"})
+}
