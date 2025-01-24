@@ -9,6 +9,8 @@ interface UserDoc extends Document{
     password: string;
     bloodType: string;
     refreshToken: string;
+    accessToken: string;
+    connections: { senderId: string | mongoose.Types.ObjectId, status: 'pending' | 'accepted' | 'rejected' , senderPhone: string}[];
 }
 
 
@@ -20,7 +22,15 @@ const UserSchema = new Schema({
     password: {type: String, required: true},
     salt: {type: String, required: true},
     bloodType: {type: String, required: true},
-    refreshToken: { type: String, default: null }
+    refreshToken: { type: String, default: null },
+    accessToken: { type: String, default: null },
+    connections: [
+        {
+          senderId: { type: Schema.Types.ObjectId, ref: 'User' },
+          status: { type: String, enum: ['pending', 'accepted', 'rejected'], default: 'pending' },
+          senderPhone: { type: String, required: true}
+        }
+      ]
 },{
     toJSON:{
         transform(doc, ret){

@@ -6,66 +6,84 @@ import { generateAccessToken } from '../utility';
 import { UserPayload } from '../dto';
 
 export const AuthorizeUser = async (req: Request, res: Response, next: NextFunction) => {
-    const authHeader = req.headers.authorization;
-    const userId = req.headers['user-id'];
-    console.log("\nUSER ID: "+userId)
-    if (!authHeader) {
-      return res.status(401).json({ msg: 'No token provided.' });
-    }
+  const authHeader = req.headers.authorization;
+  const userId = req.headers['user-id'];
   
-    const accessToken = authHeader.split(' ')[1];
-    console.log("\nAT FROM MIDDLEWARE: " + accessToken)
-    // Verify the access token
-    jwt.verify(accessToken, JWT_SECRET, async (err, decoded) => {
-      if (err) { // Access token is invalid or expired
-        console.log("\nInvalid access token")
-        if (!userId) {
-          return res.status(403).json({ msg: 'User ID not provided, unable to refresh token.' });
-        }
+  console.log("\nUSER ID: " + userId);
   
-        try {
-          // Find User by ID and validate RT
-          const user = await User.findById(userId);
-  
-          if (!user) {
-            return res.status(404).json({ msg: 'User not found' });
-          }
-          console.log("\n USER FOUND")
-          const refreshToken = user.refreshToken;
-          console.log("\n"+"REFRESH TOKEN: "+refreshToken+"\n")
-          if (!refreshToken) {
-            return res.status(403).json({ msg: 'No refresh token available, please log in.' });
-          }
-  
-          // Verify the refresh token
-          jwt.verify(refreshToken, JWT_REFRESH_SECRET, async (err) => {
-            if (err) {
-              return res.status(403).json({ msg: 'Invalid refresh token, please log in again.' });
-            }
-  
-            // Refresh token is valid
-            const payload: UserPayload = {
-              _id: user._id.toString(),
-              phone: user.phone,
-              name: user.name,
-            };
-  
-            const newAccessToken = generateAccessToken(payload);
-            console.log("\n NEW ACCESS TOKEN: "+newAccessToken)
-            res.setHeader('access-token', newAccessToken); 
-  
-            
-            
-            console.log("All good new AT: "+newAccessToken+"\n")
-            next(); 
-          });
-        } catch (e) {
-          return res.status(500).json({ msg: 'Server error while processing refresh token.' });
-        }
+  if (!authHeader) {
+    return res.status(401).json({ msg: 'No token provided.' });
+  }
+
+  const accessToken = authHeader.split(' ')[1];
+  console.log("\nAT FROM MIDDLEWARE: " + accessToken);
+
+  if (!userId) {
+    return res.status(403).json({ msg: 'User ID not provided, unable to refresh token.' });
+  }
+  const user = await User.findById(userId);
+
+  if(accessToken!==user?.accessToken){
+    return res.status(500).json({msg: "Dear malicious user get shit on"})
+  }
+
+  try {
+    // Verify the access token synchronously
+    const payload = jwt.verify(accessToken, JWT_SECRET) as UserPayload; // Sync verification
+
+    console.log("ACCESS TOKEN IS VALID");
+    req.userId = payload._id;
+    return next(); // If valid, proceed
+
+  } catch (err) {
+    // If access token is invalid or expired, check the refresh token
+    console.log("\nInvalid access token");
+    
+    try {
+      
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found' });
       }
-      console.log("ACCESS TOKEN IS VALID")
-  
-      next(); 
-    });
-  };
+      
+      console.log("\nUSER FOUND");
+      const refreshToken = user.refreshToken;
+      console.log("\nREFRESH TOKEN: " + refreshToken);
+      
+      if (!refreshToken) {
+        return res.status(403).json({ msg: 'No refresh token available, please log in.' });
+      }
+
+      // Verify the refresh token synchronously
+      try {
+        jwt.verify(refreshToken, JWT_REFRESH_SECRET); // Sync verification for refresh token
+
+        // If refresh token is valid, generate a new access token
+        const payload: UserPayload = {
+          _id: user._id.toString(),
+          phone: user.phone,
+          name: user.name,
+        };
+
+        const newAccessToken = generateAccessToken(payload);
+
+        user.accessToken = newAccessToken;
+        await user.save();
+
+        console.log("\nNEW ACCESS TOKEN: " + newAccessToken);
+        res.setHeader('access-token', newAccessToken);
+
+        req.userId = user._id;
+        console.log("All good, new AT: " + newAccessToken + "\n");
+        return next(); // Proceed to the next middleware or route handler
+
+      } catch (refreshErr) {
+        return res.status(403).json({ msg: 'Invalid refresh token, please log in again.' });
+      }
+
+    } catch (e) {
+      return res.status(500).json({ msg: 'Server error while processing refresh token.' });
+    }
+  }
+};
+
 

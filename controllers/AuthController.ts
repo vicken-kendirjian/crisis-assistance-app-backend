@@ -128,6 +128,7 @@ export const userLogin = async (req: Request, res: Response) => {
 
     //Save the refresh token in the DB
     user.refreshToken = refreshToken;
+    user.accessToken = accessToken;
     await user.save();
 
     //req.userId = user._id.toString();
