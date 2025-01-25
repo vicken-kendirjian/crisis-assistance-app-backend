@@ -11,6 +11,12 @@ interface UserDoc extends Document{
     refreshToken: string;
     accessToken: string;
     connections: { senderId: string | mongoose.Types.ObjectId, status: 'pending' | 'accepted' | 'rejected' , senderPhone: string}[];
+    location: {
+        lat: number | null; // Latitude (nullable)
+        lng: number | null; // Longitude (nullable)
+    };
+    locationSharing: boolean;
+    connectedUsers: (string | mongoose.Types.ObjectId)[];
 }
 
 
@@ -30,7 +36,18 @@ const UserSchema = new Schema({
           status: { type: String, enum: ['pending', 'accepted', 'rejected'], default: 'pending' },
           senderPhone: { type: String, required: true}
         }
-      ]
+      ],
+    connectedUsers: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'User', // Reference to other users in the `User` collection
+        },
+    ],
+    location: {
+        lat: { type: Number, required: false }, // Latitude (optional for now)
+        lng: { type: Number, required: false }  // Longitude (optional for now)
+    },
+    locationSharing: { type: Boolean, default: false }
 },{
     toJSON:{
         transform(doc, ret){

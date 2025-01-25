@@ -26,19 +26,28 @@ export const searchUser = async (req: Request, res: Response) => {
 
 export const sendConnectionRequest = async (req: Request, res: Response) => {
     const {targetPhone} = req.body;
-    const userId = req.userId;
+    const userId = req.userId;//sender
 
     try{
-        const targetUser = await User.findOne({phone: targetPhone});
-        
+        const targetUser = await User.findOne({phone: targetPhone});//receiver
         if(!targetUser){
             return res.status(404).json({msg: "Target user not found"})
+        }
+
+        const alreadySent = targetUser.connections.find( c=> {
+          return String(c.senderId) === String(userId) && c.status === 'pending';
+        })
+        if(alreadySent){
+          return res.status(500).json({msg: 'You already sent a connection request to this user'})
         }
 
         console.log("User found")
         const senderUser = await User.findById(userId);
         if(!senderUser){
             return res.status(404).json({ msg: "Sender user not found"});
+        }
+        if(senderUser.connectedUsers.includes(targetUser._id)){
+          return res.status(500).json({msg: "You are already connected with this user."})
         }
         if(targetPhone===senderUser.phone){
           return res.status(500).json({msg: "You cannot send a request to yourself."})
@@ -86,22 +95,37 @@ export const handleConnectionRequest = async (req: Request, res: Response) => {
       }
   
       // Update connection status
-      connection.status = action === 'accept' ? 'accepted' : 'rejected';
-      await user.save();
 
-      console.log("Now saving the connection for Chris");
-      const targetUser = await User.findById(targetUserId);
+      if(action=='reject'){
+        connection.status = 'rejected'
+        await user.save()
+        return res.status(200).json({ msg: `Connection request ${action}ed` });
+      }
+      else if(action=='accept'){
+        connection.status = 'accepted'
+        await user.save()
+
+        console.log("Now saving the connection for Chris");
+        const targetUser = await User.findById(targetUserId);
       
-      if(!targetUser) return res.status(404).json({msg: "Target User not found"});
+        if(!targetUser) return res.status(404).json({msg: "Target User not found"});
 
-      targetUser.connections.push({ 
-        senderId: user._id,
-        status: 'accepted',
-        senderPhone: user.phone
-      })
-      await targetUser.save()
+        targetUser.connections.push({ 
+          senderId: user._id,
+          status: 'accepted',
+          senderPhone: user.phone
+        })
+        targetUser.connectedUsers.push(String(userId));
+        user.connectedUsers.push(String(targetUserId))
+        await user.save()
+        await targetUser.save()
   
-      return res.status(200).json({ msg: `Connection request ${action}ed` });
+        return res.status(200).json({ msg: `Connection request ${action}ed` });
+      }
+      // connection.status = action === 'accept' ? 'accepted' : 'rejected';
+      // await user.save();
+
+      
     } catch (err) {
       console.log(err)
       return res.status(500).json({ msg: 'Server error' });
