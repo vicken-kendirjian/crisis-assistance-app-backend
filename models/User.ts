@@ -10,6 +10,7 @@ interface UserDoc extends Document{
     bloodType: string;
     refreshToken: string;
     accessToken: string;
+    isAdmin: boolean;
     connections: { senderId: string | mongoose.Types.ObjectId, status: 'pending' | 'accepted' | 'rejected' , senderPhone: string}[];
     location: {
         lat: number | null; // Latitude (nullable)
@@ -30,6 +31,7 @@ const UserSchema = new Schema({
     bloodType: {type: String, required: true},
     refreshToken: { type: String, default: null },
     accessToken: { type: String, default: null },
+    isAdmin: {type : Boolean, default: false },
     connections: [
         {
           senderId: { type: Schema.Types.ObjectId, ref: 'User' },

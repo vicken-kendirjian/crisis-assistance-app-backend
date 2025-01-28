@@ -12,6 +12,7 @@ export interface UserPayload {
     _id: string | mongoose.Types.ObjectId;
     phone: string;
     name: string;
+    isAdmin: boolean;
 }
 
 
@@ -24,6 +25,7 @@ export interface OtpInput{
 export interface UserLogin{
     phone: string;
     password: string;
+    platform: string;
 }
 
 

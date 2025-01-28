@@ -62,6 +62,7 @@ export const AuthorizeUser = async (req: Request, res: Response, next: NextFunct
           _id: user._id.toString(),
           phone: user.phone,
           name: user.name,
+          isAdmin: user.isAdmin
         };
 
         const newAccessToken = generateAccessToken(payload);
@@ -87,3 +88,46 @@ export const AuthorizeUser = async (req: Request, res: Response, next: NextFunct
 };
 
 
+
+
+
+export const allowAdmin = async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.headers['user-id'];
+
+  if (!userId) {
+    return res.status(403).json({ msg: 'User ID not provided, unable to refresh token.' });
+  }
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    return res.status(404).json({ msg: 'User not found' });
+  }
+
+  if (!user.isAdmin) {
+    return res.status(403).send({ error: 'Admins only' });
+  }
+
+  next();
+};
+
+
+export const allowUser = async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.headers['user-id'];
+
+  if (!userId) {
+    return res.status(403).json({ msg: 'User ID not provided, unable to refresh token.' });
+  }
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    return res.status(404).json({ msg: 'User not found' });
+  }
+
+  if (user.isAdmin) {
+    return res.status(403).send({ error: 'Users only' });
+  }
+
+  next();
+};

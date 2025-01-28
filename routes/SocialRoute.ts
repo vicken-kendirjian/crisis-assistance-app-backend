@@ -1,15 +1,18 @@
 import express, {Request,Response,NextFunction} from 'express';
 import { CreateUserValidation, OTPValidation, LoginValidation } from '../middlewares/ValidationMiddleware';
-import { AuthorizeUser } from '../middlewares/AuthMiddleware';
+import { AuthorizeUser, allowUser } from '../middlewares/AuthMiddleware';
 import { searchUser, sendConnectionRequest, handleConnectionRequest, getUserConnections } from '../controllers/SocialController';
 
 const router = express.Router();
 
 
+router.use(AuthorizeUser); // First middleware
+router.use(allowUser); // Second middleware
 
-router.get('/search', AuthorizeUser, searchUser )
-router.post('/connect', AuthorizeUser, sendConnectionRequest)
-router.post('/handle-connection', AuthorizeUser, handleConnectionRequest);
-router.get('/connections', AuthorizeUser, getUserConnections);
+
+router.get('/search', searchUser )
+router.post('/connect', sendConnectionRequest)
+router.post('/handle-connection', handleConnectionRequest);
+router.get('/connections', getUserConnections);
 
 export {router as SocialRoute};

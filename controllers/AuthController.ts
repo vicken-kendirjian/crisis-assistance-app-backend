@@ -96,7 +96,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
 
 
 export const userLogin = async (req: Request, res: Response) => {
-  const { phone, password } = <UserLogin>req.body; // Assuming phone and password are passed in the request body
+  const { phone, password, platform } = <UserLogin>req.body; // Assuming phone and password are passed in the request body
 
   try {
 
@@ -110,17 +110,26 @@ export const userLogin = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ msg: 'User not found' });
     }
+
     //Validate the provided password with the stored password
     const isPasswordValid = await validatePassword(password, user.password, user.salt);
     if (!isPasswordValid) {
       return res.status(401).json({ msg: 'Invalid credentials' });
     }
 
+    // Ensure platform matches
+    if (platform === 'web' && !user.isAdmin) {
+      return res.status(403).send({ error: 'Only admins can log in on the web' });
+    } else if (platform === 'mobile' && user.isAdmin) {
+      return res.status(403).send({ error: 'Admins cannot log in on mobile' });
+    }
+
     //Generate access token and refresh token
     const payload : UserPayload = {
       _id: user._id,
       phone: user.phone,
-      name: user.name
+      name: user.name,
+      isAdmin: user.isAdmin
     }
     
     const accessToken = generateAccessToken(payload); 
@@ -131,16 +140,18 @@ export const userLogin = async (req: Request, res: Response) => {
     user.accessToken = accessToken;
     await user.save();
 
-    //req.userId = user._id.toString();
+    
     res.setHeader('access-token', accessToken);
     console.log("From LOGIN: "+accessToken)
     //Return access token to the frontend
     return res.status(200).json({
+      accessToken,
       user: {
         _id: user._id,
         phone: user.phone,
         name: user.name,
-        lastname: user.lastname
+        lastname: user.lastname,
+        isAdmin: user.isAdmin
       }
     });
   } catch (err) {
