@@ -1,6 +1,6 @@
 import express, { Application } from "express";
 import bodyParser from "body-parser";
-import { AuthRoute, SocialRoute } from "../routes";
+import { AuthRoute, SocialRoute, VolunteerRoute } from "../routes";
 
 
 
@@ -11,7 +11,8 @@ export default async(app: Application) => {
 
 
     app.use('/auth', AuthRoute);
-    app.use('/user', SocialRoute)
+    app.use('/user/social', SocialRoute);
+    app.use('/user/volunteer', VolunteerRoute)
     return app;
 
 }

@@ -28,3 +28,23 @@ export const LoginValidation = [
   body('password').notEmpty().withMessage('Password is required')
 ]
 
+
+export const VolunteerValidation = [
+  body('service')
+  .notEmpty().withMessage('Service is required')
+  .isString().withMessage('Service must be a string')
+  .isIn(['medical', 'psychological', 'maintenance']).withMessage('Service must be one of: medical, psychological, maintenance'),
+
+  body('title')
+    .notEmpty().withMessage('Title is required')
+    .isString().withMessage('Title must be a string'),
+
+  body('description')
+    .notEmpty().withMessage('Description is required')
+    .isString().withMessage('Description must be a string'),
+
+  body('contactDetails')
+    .notEmpty().withMessage('Contact details are required')
+    .isString().withMessage('Contact details must be a string')
+];
+
