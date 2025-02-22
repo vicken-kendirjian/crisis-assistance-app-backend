@@ -9,7 +9,7 @@ router.post('/signup', CreateUserValidation, userSignup)
 router.post('/verifyotp', OTPValidation, verifyOtp)
 router.post('/login', LoginValidation, userLogin)
 
-router.get('/test', AuthorizeUser, testCall)
+router.get('/test', testCall)
 
 
 
