@@ -10,7 +10,7 @@ router.use(AuthorizeUser); // First middleware
 router.use(allowUser); // Second middleware
 
 
-router.get('/search', searchUser )
+router.get('/search', searchUser )//    /search?phone=%2B961XXXXXXXX
 router.post('/connect', sendConnectionRequest)
 router.post('/handle-connection', handleConnectionRequest);
 router.get('/connections', getUserConnections);
