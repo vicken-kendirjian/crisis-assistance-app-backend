@@ -6,6 +6,9 @@ import { AuthRoute, SocialRoute, VolunteerRoute } from "../routes";
 
 export default async(app: Application) => {
 
+    const cors = require("cors");
+    app.use(cors());
+
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
 
