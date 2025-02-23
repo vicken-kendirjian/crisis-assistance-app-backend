@@ -20,6 +20,7 @@ export const userSignup = async (req: Request, res: Response) => {
 
   try {
     // Check if the user already exists in the database
+    console.log("Check for dups")
     const duplicate = await User.findOne({ phone });
     if (duplicate) {
       return res.status(400).json({ msg: 'User already exists' });
@@ -31,10 +32,10 @@ export const userSignup = async (req: Request, res: Response) => {
     // Store OTP and user info in Redis
     const userData = { name, lastname, phone, password, bloodType };
     await storeUserAndOtp(phone, otp, userData);
-
+    console.log("Storing data in Redis")
     // Send OTP via Twilio
     await sendOtp(phone, otp);
-
+    console.log("OTP sent")
     return res.status(200).json({ msg: 'OTP sent. Please verify to complete registration.' });
   } catch (err) {
     console.error(err);
