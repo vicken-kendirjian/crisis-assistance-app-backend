@@ -101,8 +101,6 @@ export const handleConnectionRequest = async (req: Request, res: Response) => {
       // Update connection status
 
       if(action=='reject'){
-        connection.status = 'rejected'
-        await user.save()
         return res.status(200).json({ msg: `Connection request ${action}ed` });
       }
       else if(action=='accept'){
@@ -152,13 +150,11 @@ export const getUserConnections = async (req: Request, res: Response) => {
   
       // Filter connections based on their status
       const acceptedConnections = user.connections.filter(c => c.status === 'accepted');
-      const rejectedConnections = user.connections.filter(c => c.status === 'rejected');
       const pendingConnections = user.connections.filter(c => c.status === 'pending');
   
       // Send the response back to the client
       return res.status(200).json({
         accepted: acceptedConnections,
-        rejected: rejectedConnections,
         pending: pendingConnections
       });
     } catch (err) {

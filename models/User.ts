@@ -11,7 +11,7 @@ interface UserDoc extends Document{
     refreshToken: string;
     accessToken: string;
     isAdmin: boolean;
-    connections: { senderId: string | mongoose.Types.ObjectId, status: 'pending' | 'accepted' | 'rejected' , senderPhone: string, senderName: string, senderLastname: string}[];
+    connections: { senderId: string | mongoose.Types.ObjectId, status: 'pending' | 'accepted', senderPhone: string, senderName: string, senderLastname: string}[];
     location: {
         lat: number | null; // Latitude (nullable)
         lng: number | null; // Longitude (nullable)
@@ -35,7 +35,7 @@ const UserSchema = new Schema({
     connections: [
         {
           senderId: { type: Schema.Types.ObjectId, ref: 'User' },
-          status: { type: String, enum: ['pending', 'accepted', 'rejected'], default: 'pending' },
+          status: { type: String, enum: ['pending', 'accepted'], default: 'pending' },
           senderPhone: { type: String, required: true},
           senderName: { type: String},
           senderLastname: { type: String}
