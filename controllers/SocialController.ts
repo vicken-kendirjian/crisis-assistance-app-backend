@@ -77,9 +77,10 @@ export const sendConnectionRequest = async (req: Request, res: Response) => {
 
 
 export const handleConnectionRequest = async (req: Request, res: Response) => {
-  const token = req.nat
+    const token = req.nat
     const {targetUserId, action } = req.body; // userId of the receiver and targetUserId of the sender
     const userId = req.userId;
+    console.log(targetUserId+"\n"+userId)
     if (!['accept', 'reject'].includes(action)) {
       return res.status(400).json({ msg: 'Invalid action', token });
     }
