@@ -5,21 +5,23 @@ import { User } from '../models';
 
 export const searchUser = async (req: Request, res: Response) => {
 
+    const token = req.nat
     const phone = req.query;
     console.log("HI FROM SC");
     try{
         const user = await User.findOne(phone);
 
-        if(!user) return res.status(404).json({msg: "User not found"})
+        if(!user) return res.status(404).json({msg: "User not found", token})
         
         return res.status(200).json({
             _id: user._id,
             name: user.name,
             lastname: user.lastname,
-            bloodType: user.bloodType
+            bloodType: user.bloodType,
+            token
         })
     }catch(err){
-        return res.status(500).json({msg: 'Server error'})
+        return res.status(500).json({msg: 'Server error', token})
     }
 }
 
@@ -33,26 +35,26 @@ export const sendConnectionRequest = async (req: Request, res: Response) => {
     try{
         const targetUser = await User.findOne({phone: targetPhone});//receiver
         if(!targetUser){
-            return res.status(404).json({msg: "Target user not found"})
+            return res.status(404).json({msg: "Target user not found", token})
         }
 
         const alreadySent = targetUser.connections.find( c=> {
           return String(c.senderId) === String(userId) && c.status === 'pending';
         })
         if(alreadySent){
-          return res.status(505).json({msg: 'You already sent a connection request to this user'})
+          return res.status(505).json({msg: 'You already sent a connection request to this user', token})
         }
 
         console.log("User found")
         const senderUser = await User.findById(userId);
         if(!senderUser){
-            return res.status(404).json({ msg: "Sender user not found"});
+            return res.status(404).json({ msg: "Sender user not found", token});
         }
         if(senderUser.connectedUsers.includes(targetUser._id)){
-          return res.status(506).json({msg: "You are already connected with this user."})
+          return res.status(506).json({msg: "You are already connected with this user.", token})
         }
         if(targetPhone===senderUser.phone){
-          return res.status(507).json({msg: "You cannot send a request to yourself."})
+          return res.status(507).json({msg: "You cannot send a request to yourself.", token})
         }
         console.log("Sender User found")
         targetUser.connections.push({ 
@@ -67,23 +69,25 @@ export const sendConnectionRequest = async (req: Request, res: Response) => {
         await targetUser.save();
         return res.status(200).json({msg: "Connection request sent", token})
     }catch(err){
+      
       console.log(err);
-      return res.status(500).json({msg: 'Server error'})
+      return res.status(500).json({msg: 'Server error', token})
     }
 }
 
 
 export const handleConnectionRequest = async (req: Request, res: Response) => {
+  const token = req.nat
     const {targetUserId, action } = req.body; // userId of the receiver and targetUserId of the sender
     const userId = req.userId;
     if (!['accept', 'reject'].includes(action)) {
-      return res.status(400).json({ msg: 'Invalid action' });
+      return res.status(400).json({ msg: 'Invalid action', token });
     }
   
     try {
       const user = await User.findById(userId);
       if (!user) {
-        return res.status(404).json({ msg: ' Receiver User not found' });
+        return res.status(404).json({ msg: ' Receiver User not found' , token});
       }
       console.log("User found")
 
@@ -93,16 +97,16 @@ export const handleConnectionRequest = async (req: Request, res: Response) => {
       });
       
       if (!connection) {
-        return res.status(404).json({ msg: 'Connection request not found' });
+        return res.status(404).json({ msg: 'Connection request not found', token });
       }
       if (connection.status!=='pending'){
-        return res.status(500).json({msg: 'Server error'})
+        return res.status(500).json({msg: 'Server error', token})
       }
   
       // Update connection status
 
       if(action=='reject'){
-        return res.status(200).json({ msg: `Connection request ${action}ed` });
+        return res.status(200).json({ msg: `Connection request ${action}ed` , token});
       }
       else if(action=='accept'){
         connection.status = 'accepted'
@@ -111,7 +115,7 @@ export const handleConnectionRequest = async (req: Request, res: Response) => {
         console.log("Now saving the connection for Chris");
         const targetUser = await User.findById(targetUserId);
       
-        if(!targetUser) return res.status(404).json({msg: "Target User not found"});
+        if(!targetUser) return res.status(404).json({msg: "Target User not found", token});
 
         targetUser.connections.push({ 
           senderId: user._id,
@@ -125,7 +129,7 @@ export const handleConnectionRequest = async (req: Request, res: Response) => {
         await user.save()
         await targetUser.save()
   
-        return res.status(200).json({ msg: `Connection request ${action}ed` });
+        return res.status(200).json({ msg: `Connection request ${action}ed`, token });
       }
       // connection.status = action === 'accept' ? 'accepted' : 'rejected';
       // await user.save();
@@ -133,7 +137,7 @@ export const handleConnectionRequest = async (req: Request, res: Response) => {
       
     } catch (err) {
       console.log(err)
-      return res.status(500).json({ msg: 'Server error' });
+      return res.status(500).json({ msg: 'Server error', token });
     }
 };
 
@@ -146,7 +150,7 @@ export const getUserConnections = async (req: Request, res: Response) => {
       const user = await User.findById(userId);
   
       if (!user) {
-        return res.status(404).json({ msg: 'User not found' });
+        return res.status(404).json({ msg: 'User not found', token });
       }
   
       // Filter connections based on their status
@@ -160,6 +164,6 @@ export const getUserConnections = async (req: Request, res: Response) => {
         token 
       });
     } catch (err) {
-      return res.status(500).json({ msg: 'Server error' });
+      return res.status(500).json({ msg: 'Server error', token });
     }
 };
