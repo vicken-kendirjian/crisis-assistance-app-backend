@@ -167,3 +167,38 @@ export const getUserConnections = async (req: Request, res: Response) => {
       return res.status(500).json({ msg: 'Server error', token });
     }
 };
+
+export const removeConnection = async (req: Request, res: Response) => {
+  const userId = req.userId; 
+  const token = req.nat;
+  const targetPhone = req.body.targetPhone; // Extract targetPhone from the body
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found', token });
+    }
+
+    // Check if user has connections
+    if (!user.connections || user.connections.length === 0) {
+      return res.status(404).json({ msg: 'No connections found', token });
+    }
+
+    // Remove the connection where senderPhone matches targetPhone
+    user.connections.forEach((connection, index) => {
+      if (connection.senderPhone === targetPhone) {
+        // Remove the connection
+        user.connections.splice(index, 1);  // Splice removes the element at the given index
+      }
+    });
+
+    // Save the updated user object
+    await user.save();
+
+    return res.status(200).json({ msg: 'Connection removed successfully', token });
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: 'Server error', token });
+  }
+};
