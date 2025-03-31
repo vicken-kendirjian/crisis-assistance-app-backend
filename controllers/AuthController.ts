@@ -164,3 +164,7 @@ export const userLogin = async (req: Request, res: Response) => {
 export const testCall = async (req: Request, res: Response) => {
   res.status(200).json({msg: "Good to go boiii"})
 }
+
+export const authTestCall = async (req: Request, res: Response) => {
+  res.status(200).json({msg: "User is authorized."})
+}
