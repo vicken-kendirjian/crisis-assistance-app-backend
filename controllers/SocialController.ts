@@ -57,7 +57,9 @@ export const sendConnectionRequest = async (req: Request, res: Response) => {
         targetUser.connections.push({ 
             senderId: senderUser._id,
             status: 'pending',
-            senderPhone: senderUser.phone
+            senderPhone: senderUser.phone,
+            senderName: senderUser.name,
+            senderLastname: senderUser.lastname
 
         })
         console.log("connection object created and pushed")
@@ -115,7 +117,9 @@ export const handleConnectionRequest = async (req: Request, res: Response) => {
         targetUser.connections.push({ 
           senderId: user._id,
           status: 'accepted',
-          senderPhone: user.phone
+          senderPhone: user.phone,
+          senderName: user.name,
+          senderLastname: user.lastname
         })
         targetUser.connectedUsers.push(String(userId));
         user.connectedUsers.push(String(targetUserId))
