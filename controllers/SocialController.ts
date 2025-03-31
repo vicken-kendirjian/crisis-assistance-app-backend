@@ -25,6 +25,7 @@ export const searchUser = async (req: Request, res: Response) => {
 
 
 export const sendConnectionRequest = async (req: Request, res: Response) => {
+    console.log("Send req controller")
     const {targetPhone} = req.body;
     const userId = req.headers['user-id'];;//sender
 
@@ -38,7 +39,7 @@ export const sendConnectionRequest = async (req: Request, res: Response) => {
           return String(c.senderId) === String(userId) && c.status === 'pending';
         })
         if(alreadySent){
-          return res.status(500).json({msg: 'You already sent a connection request to this user'})
+          return res.status(505).json({msg: 'You already sent a connection request to this user'})
         }
 
         console.log("User found")
@@ -47,10 +48,10 @@ export const sendConnectionRequest = async (req: Request, res: Response) => {
             return res.status(404).json({ msg: "Sender user not found"});
         }
         if(senderUser.connectedUsers.includes(targetUser._id)){
-          return res.status(500).json({msg: "You are already connected with this user."})
+          return res.status(506).json({msg: "You are already connected with this user."})
         }
         if(targetPhone===senderUser.phone){
-          return res.status(500).json({msg: "You cannot send a request to yourself."})
+          return res.status(507).json({msg: "You cannot send a request to yourself."})
         }
         console.log("Sender User found")
         targetUser.connections.push({ 
@@ -63,6 +64,7 @@ export const sendConnectionRequest = async (req: Request, res: Response) => {
         await targetUser.save();
         return res.status(200).json({msg: "Connection request sent"})
     }catch(err){
+      console.log(err);
       return res.status(500).json({msg: 'Server error'})
     }
 }
