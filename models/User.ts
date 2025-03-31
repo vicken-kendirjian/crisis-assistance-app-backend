@@ -37,8 +37,8 @@ const UserSchema = new Schema({
           senderId: { type: Schema.Types.ObjectId, ref: 'User' },
           status: { type: String, enum: ['pending', 'accepted', 'rejected'], default: 'pending' },
           senderPhone: { type: String, required: true},
-          senderName: { type: String, required: true},
-          senderLastname: { type: String, required: true }
+          senderName: { type: String},
+          senderLastname: { type: String}
         }
       ],
     connectedUsers: [
