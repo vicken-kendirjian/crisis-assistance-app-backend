@@ -3,7 +3,7 @@ import { JWT_REFRESH_SECRET, JWT_SECRET } from '../config';
 import { UserPayload } from '../dto';
 
 export const generateAccessToken = (payload: UserPayload) => {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: '15m' });
+    return jwt.sign(payload, JWT_SECRET, { expiresIn: '5m' });
 };
   
 export const generateRefreshToken = (payload: UserPayload) => {

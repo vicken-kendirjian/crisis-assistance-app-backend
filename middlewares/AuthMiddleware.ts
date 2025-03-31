@@ -71,10 +71,11 @@ export const AuthorizeUser = async (req: Request, res: Response, next: NextFunct
         await user.save();
 
         console.log("\nNEW ACCESS TOKEN: " + newAccessToken);
-        res.setHeader('access-token', newAccessToken);
+        // req.nat = newAccessToken
 
         req.userId = user._id;
         console.log("All good, new AT: " + newAccessToken + "\n");
+        req.nat = newAccessToken
         return next(); // Proceed to the next middleware or route handler
 
       } catch (refreshErr) {

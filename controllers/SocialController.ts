@@ -139,7 +139,7 @@ export const handleConnectionRequest = async (req: Request, res: Response) => {
 
 export const getUserConnections = async (req: Request, res: Response) => {
     const userId = req.userId; 
-  
+    const token = req.nat
     try {
       // Find the user by their ID
       const user = await User.findById(userId);
@@ -155,7 +155,8 @@ export const getUserConnections = async (req: Request, res: Response) => {
       // Send the response back to the client
       return res.status(200).json({
         accepted: acceptedConnections,
-        pending: pendingConnections
+        pending: pendingConnections,
+        token 
       });
     } catch (err) {
       return res.status(500).json({ msg: 'Server error' });
