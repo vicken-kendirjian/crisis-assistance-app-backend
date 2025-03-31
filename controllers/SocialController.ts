@@ -26,6 +26,7 @@ export const searchUser = async (req: Request, res: Response) => {
 
 export const sendConnectionRequest = async (req: Request, res: Response) => {
     console.log("Send req controller")
+    const token = req.nat
     const {targetPhone} = req.body;
     const userId = req.headers['user-id'];;//sender
 
@@ -64,7 +65,7 @@ export const sendConnectionRequest = async (req: Request, res: Response) => {
         })
         console.log("connection object created and pushed")
         await targetUser.save();
-        return res.status(200).json({msg: "Connection request sent"})
+        return res.status(200).json({msg: "Connection request sent", token})
     }catch(err){
       console.log(err);
       return res.status(500).json({msg: 'Server error'})
