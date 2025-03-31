@@ -33,6 +33,7 @@ export const AuthorizeUser = async (req: Request, res: Response, next: NextFunct
 
     console.log("ACCESS TOKEN IS VALID");
     req.userId = payload._id;
+    req.nat = accessToken
     return next(); // If valid, proceed
 
   } catch (err) {
