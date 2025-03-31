@@ -26,7 +26,7 @@ export const searchUser = async (req: Request, res: Response) => {
 
 export const sendConnectionRequest = async (req: Request, res: Response) => {
     const {targetPhone} = req.body;
-    const userId = req.userId;//sender
+    const userId = req.headers['user-id'];;//sender
 
     try{
         const targetUser = await User.findOne({phone: targetPhone});//receiver
