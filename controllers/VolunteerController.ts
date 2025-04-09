@@ -43,3 +43,21 @@ export const ApplyAsVolunteer = async (req: Request, res: Response, next: NextFu
     
 
 }
+
+
+export const getAcceptedApplicants = async (req: Request, res: Response) => {
+    const token = req.nat
+    try {
+      
+      // Fetch only volunteers with status "accepted" and populate user info
+      const acceptedApplicants = await Volunteer.find({ status: "accepted" })
+        .populate("userId", "name lastname phone");
+  
+      // Return the filtered list
+      return res.status(200).json({ data: acceptedApplicants, token });
+    } catch (error) {
+      console.error("Error fetching accepted applicants:", error);
+      return res.status(500).json({message: "Failed to fetch accepted applicants.", token });
+    }
+  };
+  
