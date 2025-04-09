@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 import { ChatLog } from '../models/ChatLog';
 import axios from 'axios';
+import { OPENROUTER_API_KEY } from '../config';
 
 export const generateReply = async (req: Request, res: Response) => {
   const token = req.nat
@@ -20,7 +21,7 @@ export const generateReply = async (req: Request, res: Response) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
           'Content-Type': 'application/json',
           'HTTP-Referer': 'http://localhost',
           'X-Title': 'Lebanon Crisis App',

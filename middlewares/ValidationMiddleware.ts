@@ -33,7 +33,7 @@ export const VolunteerValidation = [
   body('service')
   .notEmpty().withMessage('Service is required')
   .isString().withMessage('Service must be a string')
-  .isIn(['medical', 'psychological', 'maintenance']).withMessage('Service must be one of: medical, psychological, maintenance'),
+  .isIn(['medical', 'psychological', 'maintenance', 'logistics']).withMessage('Service must be one of: medical, psychological, maintenance or logistics'),
 
   body('title')
     .notEmpty().withMessage('Title is required')

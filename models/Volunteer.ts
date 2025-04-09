@@ -4,7 +4,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 interface VolunteerDoc extends Document {
   _id: string | mongoose.Types.ObjectId;
   userId: string | mongoose.Types.ObjectId; // Foreign key to the User model
-  service: 'medical' | 'psychological' | 'maintenance';
+  service: 'medical' | 'psychological' | 'maintenance' | 'logistics';
   title: string; // Title of their service (e.g., "plumber" for maintenance)
   status: 'pending' | 'accepted' | 'rejected'; // Status of the volunteer application
   description: string; // Description of their skills or expertise
@@ -22,7 +22,7 @@ const VolunteerSchema = new Schema({
   },
   service: {
     type: String,
-    enum: ['medical' , 'psychological' , 'maintenance'],
+    enum: ['medical' , 'psychological' , 'maintenance', 'logistics'],
     required: true
   },
   title: {
