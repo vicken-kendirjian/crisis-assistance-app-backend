@@ -5,10 +5,11 @@ import dbConnection from './services/Database';
 import RedisConnection from './services/Redis';
 import { setupSocketServer } from "./services/Socket";
 import http from "http"
+import mongoose from "mongoose";
 
 
 //To bypass Twilio downtime
-import { User } from "./models";
+import { User, Volunteer } from "./models";
 import { GeneratePassword, GenerateSalt, validatePassword } from './utility'
 
 
@@ -41,6 +42,29 @@ const startServer = async() => {
     
     //     await user.save();
     //=====================================================================
+
+    //Adding a new volunteer
+    // const dummyUserId = new mongoose.Types.ObjectId("660fab0b1f2c67001cb86cf8");
+
+    // const createTestVolunteer = async () => {
+    //   try {
+    //     const volunteer = new Volunteer({
+    //       userId: dummyUserId,
+    //       service: "medical",
+    //       title: "General Practitioner",
+    //       status: "accepted",
+    //       description: "Doctor available for volunteer medical assistance.",
+    //       contactDetails: "+96170111222"
+    //     });
+    
+    //     const savedVolunteer = await volunteer.save();
+    //     console.log("Test volunteer saved:", savedVolunteer);
+    //   } catch (error) {
+    //     console.error("Error saving test volunteer:", error);
+    //   }
+    // };
+    
+    // createTestVolunteer();
     app.listen(5000, () => {
         console.log("Listening on port 5000");
     });
