@@ -7,7 +7,7 @@ import { getFoodOrgs, getHospitals, getShelters } from '../controllers/GoogleMap
 const router = express.Router();
 
 
-router.get('/hostpitals', AuthorizeUser, getHospitals)
+router.get('/hospitals', AuthorizeUser, getHospitals)
 router.get('/shelters', AuthorizeUser, getShelters)
 router.get('/food-orgs', AuthorizeUser, getFoodOrgs)
 

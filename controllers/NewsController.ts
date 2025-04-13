@@ -16,7 +16,7 @@ export const getNews = async (req: Request, res: Response) => {
 
         //now I need to see if the response is all good and if so send it to front end
         if (!response.ok) {
-            return res.status(response.status).json({ error: 'Failed to fetch news' });
+            return res.status(response.status).json({ error: 'Failed to fetch news', token });
         }
       
         const data = await response.json();
@@ -24,7 +24,7 @@ export const getNews = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error('Error fetching news:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error', token });
     }
     
 }

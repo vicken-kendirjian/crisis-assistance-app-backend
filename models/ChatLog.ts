@@ -9,7 +9,8 @@ export interface ChatLogDoc extends Document {
   _id: string | mongoose.Types.ObjectId;
   sessionId: string; // Unique identifier for the conversation
   messages: ChatMessage[]; // Array of messages exchanged
-  timestamp: Date; // Creation timestamp
+  timestamp: Date; // Creation timestamp;
+  userId: string | mongoose.Types.ObjectId;
 }
 
 const chatMessageSchema = new Schema<ChatMessage>(
@@ -40,6 +41,11 @@ const chatLogSchema = new Schema<ChatLogDoc>(
     timestamp: {
       type: Date,
       default: Date.now,
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User', // Reference to the User model
+      required: true
     },
   },
   {
