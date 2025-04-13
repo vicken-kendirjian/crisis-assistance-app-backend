@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface ChatMessage {
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'system';
   content: string;
 }
 
@@ -17,7 +17,7 @@ const chatMessageSchema = new Schema<ChatMessage>(
   {
     role: {
       type: String,
-      enum: ['user', 'assistant'],
+      enum: ['user', 'assistant', 'system'],
       required: true,
     },
     content: {
