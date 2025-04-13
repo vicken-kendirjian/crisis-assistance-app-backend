@@ -19,19 +19,19 @@ export const generateReply = async (req: Request, res: Response) => {
 
   try {
 
-    if(!sessionId || sessionId==null){//new chat
-      //generate session Id
-      
-    }
-
     if(sessionId){
       const existingChat = await ChatLog.findOne({ sessionId });
       if(!existingChat){
         return res.status(500).json({ error: 'User is trying to send made up session id', token, sessionId });
       }
     }
-    sessionId = uuidv4();
-    console.log(sessionId);
+
+    if(!sessionId || sessionId==null){//new chat
+      //generate session Id
+      sessionId = uuidv4();
+      console.log(sessionId);
+    }
+
     const response = await axios.post(
       'https://openrouter.ai/api/v1/chat/completions',
       {
