@@ -1,6 +1,6 @@
 import express, { Application } from "express";
 import bodyParser from "body-parser";
-import { AuthRoute, SocialRoute, VolunteerRoute, GoogleRoute } from "../routes";
+import { AuthRoute, SocialRoute, VolunteerRoute, GoogleRoute, NewsRoute } from "../routes";
 import { ChatRoute } from "../routes/ChatRoute";
 
 
@@ -19,6 +19,7 @@ export default async(app: Application) => {
     app.use('/user/volunteer', VolunteerRoute)
     app.use('/user/geoloc', GoogleRoute)
     app.use('/user/assistant', ChatRoute)
+    app.use('/user/news', NewsRoute)
     return app;
 
 }
