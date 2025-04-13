@@ -4,6 +4,7 @@ import { ChatLog } from '../models/ChatLog';
 import axios from 'axios';
 import { OPENROUTER_API_KEY } from '../config';
 import { v4 as uuidv4 } from 'uuid';
+import Chat from 'twilio/lib/rest/Chat';
 
 
 export const generateReply = async (req: Request, res: Response) => {
@@ -22,6 +23,13 @@ export const generateReply = async (req: Request, res: Response) => {
       //generate session Id
       sessionId = uuidv4();
       console.log(sessionId);
+    }
+
+    if(sessionId){
+      const existingChat = await ChatLog.findOne({ sessionId });
+      if(!existingChat){
+        return res.status(500).json({ error: 'User is trying to send made up session id', token, sessionId });
+      }
     }
     const response = await axios.post(
       'https://openrouter.ai/api/v1/chat/completions',
