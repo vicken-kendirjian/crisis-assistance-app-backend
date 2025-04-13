@@ -8,7 +8,7 @@ import { getNews } from '../controllers/NewsController';
 const router = express.Router();
 
 
-router.get('/fetch', getNews)
+router.get('/fetch', AuthorizeUser, getNews)
 
 
 
