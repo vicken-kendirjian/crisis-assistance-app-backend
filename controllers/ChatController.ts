@@ -112,7 +112,7 @@ const saveChat = async (userId: string, sessionId: string, messages: any[]) => {
       await chat.save();
     } else {
       // Else, chat already exists — append the new messages to the existing array
-      existingChat.messages.push(...messages);
+      existingChat.messages = messages;
       await existingChat.save();
     }
 
