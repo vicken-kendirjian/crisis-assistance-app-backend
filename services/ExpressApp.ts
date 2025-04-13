@@ -17,7 +17,7 @@ export default async(app: Application) => {
     app.use('/auth', AuthRoute);
     app.use('/user/social', SocialRoute);
     app.use('/user/volunteer', VolunteerRoute)
-    app.use('/user/geoloc/', GoogleRoute)
+    app.use('/user/geoloc', GoogleRoute)
     app.use('/user/assistant', ChatRoute)
     return app;
 
