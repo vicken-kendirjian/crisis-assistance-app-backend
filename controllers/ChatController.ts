@@ -8,7 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const generateReply = async (req: Request, res: Response) => {
   const token = req.nat
-  const { messages, userId } = req.body; // Array of messages (with roles: user/system/assistant)
+  const { messages } = req.body; // Array of messages (with roles: user/system/assistant)
+  const userId = req.headers['user-id'] as string;
   let sessionId = req.query.sessionId as string;
   console.log("FROM PARAMS "+sessionId)
   if (!messages || !Array.isArray(messages)) {
