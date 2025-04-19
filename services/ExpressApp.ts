@@ -1,8 +1,9 @@
 import express, { Application } from "express";
 import bodyParser from "body-parser";
-import { AuthRoute, SocialRoute, VolunteerRoute, GoogleRoute, NewsRoute } from "../routes";
+import { AuthRoute, SocialRoute, VolunteerRoute, GoogleRoute, NewsRoute, UserRoute } from "../routes";
 import { ChatRoute } from "../routes/ChatRoute";
-import { UserRoute } from "../routes/UserRoute";
+import { User } from "../models";
+
 
 
 
