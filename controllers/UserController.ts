@@ -1,7 +1,7 @@
 import express, {Request,Response,NextFunction} from 'express';
 import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
-import { User, Volunteer } from '../models';
+import { User, Volunteer, ChatLog } from '../models';
 import { JWT_REFRESH_SECRET, JWT_SECRET } from '../config';
 import { generateAccessToken } from '../utility';
 import { UserPayload, VolunteerInput } from '../dto';
@@ -69,3 +69,42 @@ export const getUserProfile = async (req: Request, res: Response) => {
     }
   };
   
+
+  export const deleteAccount = async (req: Request, res: Response) => {
+    const userId = req.userId;
+    const token = req.nat;
+  
+    try {
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found', token });
+      }
+  
+      //Remove this user from other users' "connectedUsers"
+      await User.updateMany(
+        { connectedUsers: userId },
+        { $pull: { connectedUsers: userId } }
+      );
+  
+      //Remove this user from other users' "connections"
+      await User.updateMany(
+        { 'connections.senderId': userId },
+        { $pull: { connections: { senderId: userId } } }
+      );
+  
+      //Delete volunteer entry if it exists
+      await Volunteer.deleteMany({ userId });
+  
+      //Delete all chat sessions for this user
+      await ChatLog.deleteMany({ userId });
+  
+      //Finally, delete the user
+      await User.findByIdAndDelete(userId);
+  
+      return res.status(200).json({ msg: 'Account deleted successfully', token });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: 'Server error', token });
+    }
+  };
