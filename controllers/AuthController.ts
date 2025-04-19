@@ -48,7 +48,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return res.status(408).json({ errors: errors.array() });
   }
 
   const { phone, otp } = <OtpInput>req.body;
@@ -59,11 +59,11 @@ export const verifyOtp = async (req: Request, res: Response) => {
     
     console.log(data)
     if (!data) {
-      return res.status(400).json({ msg: 'OTP expired or invalid' });
+      return res.status(409).json({ msg: 'OTP expired or invalid' });
     }
 
     if (data.otp !== otp) {
-      return res.status(400).json({ msg: 'Incorrect OTP' });
+      return res.status(417).json({ msg: 'Incorrect OTP' });
     }
 
     // OTP is correct, create the user in MongoDB
