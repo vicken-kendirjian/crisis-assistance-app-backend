@@ -51,7 +51,7 @@ export const getAcceptedApplicants = async (req: Request, res: Response) => {
       
       // Fetch only volunteers with status "accepted" and populate user info
       const acceptedApplicants = await Volunteer.find({ status: "accepted" })
-        .populate("_id", "name lastname phone");
+        .populate("userId", "name lastname phone");
   
       // Return the filtered list
       return res.status(200).json({ data: acceptedApplicants, token });
