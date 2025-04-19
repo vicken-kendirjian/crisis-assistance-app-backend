@@ -13,5 +13,5 @@ router.use(allowUser); // Second middleware
 
 router.get('/view-profile', getUserProfile);
 router.post('/change-password', changePassword)
-router.post('/delete-account', deleteAccount)
+router.delete('/delete-account', deleteAccount)
 export {router as UserRoute};
