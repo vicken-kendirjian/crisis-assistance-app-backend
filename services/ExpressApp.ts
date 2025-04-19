@@ -21,7 +21,7 @@ export default async(app: Application) => {
     app.use('/user/geoloc', GoogleRoute)
     app.use('/user/assistant', ChatRoute)
     app.use('/user/news', NewsRoute)
-    app.use('/user', UserRoute)
+    app.use('/user/profile', UserRoute)
     return app;
 
 }

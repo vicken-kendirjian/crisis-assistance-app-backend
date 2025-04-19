@@ -4,7 +4,7 @@ import { User } from '../models';
 
 
 export const getUser = async (req: Request, res: Response) => {
-
+    console.log("getUser Controller hit.")
     const token = req.nat;
     const userId = req.userId;
     console.log(userId)
