@@ -4,8 +4,8 @@ import { ApplyAsVolunteer, getAcceptedApplicants } from '../controllers/Voluntee
 import { allowUser, AuthorizeUser } from '../middlewares/AuthMiddleware';
 const router = express.Router();
 
-router.use(AuthorizeUser);
-router.use(allowUser);
+// router.use(AuthorizeUser);
+// router.use(allowUser);
 
 router.post('/apply', VolunteerValidation, ApplyAsVolunteer)
 router.get('/volunteers-accepted', getAcceptedApplicants)
