@@ -171,49 +171,48 @@ export const getUserConnections = async (req: Request, res: Response) => {
 };
 
 export const removeConnection = async (req: Request, res: Response) => {
-  const userId = req.userId; 
+  const userId = req.userId;
   const token = req.nat;
-  const targetPhone = req.body.targetPhone; // Extract targetPhone from the body
+  const targetPhone = req.body.targetPhone;
 
   try {
     const user = await User.findById(userId);
-
     const targetUser = await User.findOne({ phone: targetPhone });
-    if(!targetUser){
-      return res.status(404).json({ msg: 'Target user not found', token });
 
-    }
     if (!user) {
       return res.status(404).json({ msg: 'User not found', token });
     }
 
-    // Check if user has connections
-    if (!user.connections || user.connections.length === 0) {
-      return res.status(404).json({ msg: 'No connections found', token });
+    if (!targetUser) {
+      return res.status(404).json({ msg: 'Target user not found', token });
     }
 
-    // Remove the connection where senderPhone matches targetPhone
-    user.connections.forEach((connection, index) => {
-      if (connection.senderPhone === targetPhone) {
-        // Remove the connection
-        user.connections.splice(index, 1);  // Splice removes the element at the given index
-      }
-    });
+    // === Remove targetUser from user's connections and connectedUsers ===
+    user.connections = user.connections.filter(
+      (connection) => connection.senderPhone !== targetPhone
+    );
 
-    user.connectedUsers.forEach((connection, index) => {
-      console.log(connection);
-      if(connection === targetUser._id){
-        user.connectedUsers.splice(index, 1);
-      }
-    })
+    user.connectedUsers = user.connectedUsers.filter(
+      (id) => id.toString() !== targetUser._id.toString()
+    );
 
-    // Save the updated user object
     await user.save();
 
-    return res.status(200).json({ msg: 'Connection removed successfully', token });
+    // === Remove user from targetUser's connections and connectedUsers ===
+    targetUser.connections = targetUser.connections.filter(
+      (connection) => connection.senderPhone !== user.phone
+    );
 
+    targetUser.connectedUsers = targetUser.connectedUsers.filter(
+      (id) => id.toString() !== user._id.toString()
+    );
+
+    await targetUser.save();
+
+    return res.status(200).json({ msg: 'Connection removed successfully', token });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ msg: 'Server error', token });
   }
 };
+
