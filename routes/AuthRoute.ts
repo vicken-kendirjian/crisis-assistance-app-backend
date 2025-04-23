@@ -12,7 +12,7 @@ router.post('/login', LoginValidation, userLogin)
 router.post('/check-token', AuthorizeUser, checkStartup)
 router.get('/test', testCall)
 router.get('/authotest', AuthorizeUser, authTestCall)
-router.post('/logout', logout)
+router.get('/logout', logout)
 
 
 export {router as AuthRoute};
