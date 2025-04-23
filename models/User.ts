@@ -8,8 +8,8 @@ interface UserDoc extends Document{
     salt: string;
     password: string;
     bloodType: string;
-    refreshToken: string;
-    accessToken: string;
+    refreshToken: string | null;
+    accessToken: string | null;
     isAdmin: boolean;
     connections: { senderId: string | mongoose.Types.ObjectId, status: 'pending' | 'accepted', senderPhone: string, senderName: string, senderLastname: string}[];
     location: {

@@ -1,6 +1,7 @@
 import express, {Request,Response,NextFunction} from 'express';
 import { validationResult } from 'express-validator';
 import { User } from '../models';
+import { Connect } from 'twilio/lib/twiml/VoiceResponse';
 
 
 export const searchUser = async (req: Request, res: Response) => {
@@ -176,6 +177,12 @@ export const removeConnection = async (req: Request, res: Response) => {
 
   try {
     const user = await User.findById(userId);
+
+    const targetUser = await User.findOne({ phone: targetPhone });
+    if(!targetUser){
+      return res.status(404).json({ msg: 'Target user not found', token });
+
+    }
     if (!user) {
       return res.status(404).json({ msg: 'User not found', token });
     }
@@ -192,6 +199,13 @@ export const removeConnection = async (req: Request, res: Response) => {
         user.connections.splice(index, 1);  // Splice removes the element at the given index
       }
     });
+
+    user.connectedUsers.forEach((connection, index) => {
+      console.log(connection);
+      if(connection === targetUser._id){
+        user.connectedUsers.splice(index, 1);
+      }
+    })
 
     // Save the updated user object
     await user.save();

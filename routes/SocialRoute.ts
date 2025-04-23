@@ -1,7 +1,7 @@
 import express, {Request,Response,NextFunction} from 'express';
 import { CreateUserValidation, OTPValidation, LoginValidation } from '../middlewares/ValidationMiddleware';
 import { AuthorizeUser, allowUser } from '../middlewares/AuthMiddleware';
-import { searchUser, sendConnectionRequest, handleConnectionRequest, getUserConnections } from '../controllers/SocialController';
+import { searchUser, sendConnectionRequest, handleConnectionRequest, getUserConnections, removeConnection } from '../controllers/SocialController';
 
 const router = express.Router();
 
@@ -13,6 +13,7 @@ router.use(allowUser); // Second middleware
 router.get('/search', searchUser )//    /search?phone=%2B961XXXXXXXX
 router.post('/connect', sendConnectionRequest)
 router.post('/handle-connection', handleConnectionRequest);
+router.post('/remove-friend', removeConnection)
 router.get('/connections', getUserConnections);
 
 export {router as SocialRoute};

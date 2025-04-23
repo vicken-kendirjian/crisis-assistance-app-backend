@@ -18,7 +18,7 @@ export const ApplyAsVolunteer = async (req: Request, res: Response, next: NextFu
     const userId = req.userId;
     try{
         // const user = await User.findById(userId)
-
+      
         const alreadyApplied = await Volunteer.findOne({userId})
         if(alreadyApplied){
             return res.status(500).json({msg: "You cannot apply more than once", token})

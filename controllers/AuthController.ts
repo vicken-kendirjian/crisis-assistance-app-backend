@@ -168,3 +168,40 @@ export const testCall = async (req: Request, res: Response) => {
 export const authTestCall = async (req: Request, res: Response) => {
   res.status(200).json({msg: "User is authorized."})
 }
+
+export const logout = async (req: Request, res: Response) => {
+  const token = req.nat;
+  const userId = req.userId;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found', token });
+    }
+
+    // Invalidate tokens
+    user.accessToken = null;
+    user.refreshToken = null;
+
+    await user.save();
+
+    return res.status(200).json({ msg: 'Logged out successfully', token: null });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: 'Server error', token });
+  }
+};
+
+export const checkStartup = async (req: Request, res: Response) => {
+  const token = req.nat;
+  const userId = req.userId;
+
+  try {
+    return res.status(200).json({ msg: 'Direct Login', token });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: 'Server error', token });
+  }
+}
