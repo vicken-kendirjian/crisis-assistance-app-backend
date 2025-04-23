@@ -166,7 +166,8 @@ export const testCall = async (req: Request, res: Response) => {
 }
 
 export const authTestCall = async (req: Request, res: Response) => {
-  res.status(200).json({msg: "User is authorized."})
+  const token = req.nat
+  res.status(200).json({msg: "User is authorized.", token})
 }
 
 export const logout = async (req: Request, res: Response) => {
