@@ -13,8 +13,8 @@ interface UserDoc extends Document{
     isAdmin: boolean;
     connections: { senderId: string | mongoose.Types.ObjectId, status: 'pending' | 'accepted', senderPhone: string, senderName: string, senderLastname: string}[];
     location: {
-        lat: number | null; // Latitude (nullable)
-        lng: number | null; // Longitude (nullable)
+        lat: string | null; // Latitude (nullable)
+        lng: string | null; // Longitude (nullable)
     };
     locationSharing: boolean;
     connectedUsers: (string | mongoose.Types.ObjectId)[];
@@ -48,8 +48,8 @@ const UserSchema = new Schema({
         },
     ],
     location: {
-        lat: { type: Number, required: false }, // Latitude (optional for now)
-        lng: { type: Number, required: false }  // Longitude (optional for now)
+        lat: { type: String, required: false }, // Latitude (optional for now)
+        lng: { type: String, required: false }  // Longitude (optional for now)
     },
     locationSharing: { type: Boolean, default: false }
 },{
