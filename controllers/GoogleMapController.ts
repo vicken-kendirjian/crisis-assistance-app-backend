@@ -1,7 +1,7 @@
 import express, {Request,Response,NextFunction} from 'express';
 import axios from 'axios';
 import { GOOGLE_MAPS_API_KEY } from '../config';
-
+import { DangerZone } from '../models/DangerZone';
 
 
 export const getHospitals = async (req: Request, res: Response) => {
@@ -28,7 +28,7 @@ export const getHospitals = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error('Error fetching hospitals:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error', token });
     }
     
 }
@@ -58,7 +58,7 @@ export const getShelters = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error('Error fetching shelters:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error', token });
     }
     
 }
@@ -80,7 +80,7 @@ export const getFoodOrgs = async (req: Request, res: Response) => {
 
         //now I need to see if the response is all good and if so send it to front end
         if (!response.ok) {
-            return res.status(response.status).json({ error: 'Failed to fetch food orgs data from Google Maps API' });
+            return res.status(response.status).json({ error: 'Failed to fetch food orgs data from Google Maps API', token });
         }
       
         const data = await response.json();
@@ -88,7 +88,19 @@ export const getFoodOrgs = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error('Error fetching food orgs:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error',token });
     }
     
+}
+
+
+export const getDangerZones = async (req: Request, res: Response) => {
+    const token = req.nat
+    try {
+        const dangerZones = await DangerZone.find();
+        return res.status(200).json({ dangerZones, token });
+      } catch (err) {
+        console.error(err);
+        return res.status(500).json({ msg: 'Server error', token });
+      }    
 }

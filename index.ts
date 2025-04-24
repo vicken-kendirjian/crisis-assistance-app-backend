@@ -6,6 +6,7 @@ import RedisConnection from './services/Redis';
 import { setupSocketServer } from "./services/Socket";
 import http from "http"
 import mongoose from "mongoose";
+import { DangerZone } from "./models/DangerZone";
 
 
 //To bypass Twilio downtime
@@ -65,6 +66,14 @@ const startServer = async() => {
     // };
     
     // createTestVolunteer();
+
+    // const newDangerZone = new DangerZone({
+    //     lat: 33.270451,
+    //     lng: 35.203778,
+    //     radius: 30
+    //   });
+      
+    //   await newDangerZone.save();
     app.listen(5000, () => {
         console.log("Listening on port 5000");
     });
