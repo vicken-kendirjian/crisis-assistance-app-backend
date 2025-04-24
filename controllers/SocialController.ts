@@ -216,3 +216,30 @@ export const removeConnection = async (req: Request, res: Response) => {
   }
 };
 
+
+export const getConnectedUsersInfo = async (req: Request, res: Response) => {
+  const userId = req.userId;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    // Get the connectedUsers array (list of friend IDs)
+    const connectedUserIds = user.connectedUsers;
+
+    // Fetch name, lastname, and location of each connected user
+    const friends = await User.find(
+      { _id: { $in: connectedUserIds } },
+      { name: 1, lastname: 1, location: 1 } // projection: only return these fields
+    );
+
+    return res.status(200).json({ friends });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: 'Server error' });
+  }
+};
+
