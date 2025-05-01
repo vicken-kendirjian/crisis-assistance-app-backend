@@ -1,7 +1,8 @@
 import express, {Request,Response,NextFunction} from 'express';
 import { AuthorizeAdmin, AuthorizeUser } from '../middlewares/AuthMiddleware';
-import { deleteDangerZoneByCoordinates, getAllApplicants, getAllUsers, setDangerZone, updateApplicationStatus } from '../controllers/AdminController';
+import { deleteDangerZoneByCoordinates,getAllUsers, getPendingApplicants, setDangerZone, updateApplicationStatus } from '../controllers/AdminController';
 import { getUserConnections } from '../controllers/SocialController';
+import { getAcceptedApplicants } from '../controllers/VolunteerController';
 
 const router = express.Router();
 
@@ -9,7 +10,8 @@ const router = express.Router();
 router.use(AuthorizeAdmin); // First middleware
 
 
-router.get('/all-applicants', getAllApplicants)
+router.get('/all-pending-applicants', getPendingApplicants),
+router.get('/all-accepted-applicants', getAcceptedApplicants),
 router.post('/update-status', updateApplicationStatus)
 router.get('/get-all-users', getAllUsers),
 router.post('/set-danger-zone', setDangerZone)

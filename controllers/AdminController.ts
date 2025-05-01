@@ -3,21 +3,34 @@ import { validationResult } from 'express-validator';
 import { Volunteer, User, DangerZone  } from '../models';
 
 
-export const getAllApplicants = async (req: Request, res: Response) => {
-    const userId = req.userId;
-    const token = req.nat;
-    try {
-        // Fetch all volunteer applicants and populate the userId field with name & email
-        const applicants = await Volunteer.find().populate("userId", "name lastname phone");
-    
-        // Return the list of applicants
-        return res.status(200).json({ data: applicants, token });
-      } catch (error) {
-        console.error("Error fetching applicants:", error);
-        return res.status(500).json({ success: false, message: "Failed to fetch applicants." , token});
-      }
-    
-}
+export const getPendingApplicants = async (req: Request, res: Response) => {
+  const userId = req.userId;
+  const token = req.nat;
+
+  try {
+    const applicants = await Volunteer.find({ status: 'pending' }).populate("userId", "name lastname phone");
+
+    return res.status(200).json({ data: applicants, token });
+  } catch (error) {
+    console.error("Error fetching pending applicants:", error);
+    return res.status(500).json({ success: false, message: "Failed to fetch pending applicants.", token });
+  }
+};
+
+
+export const getAcceptedApplicants = async (req: Request, res: Response) => {
+  const userId = req.userId;
+  const token = req.nat;
+
+  try {
+    const applicants = await Volunteer.find({ status: 'accepted' }).populate("userId", "name lastname phone");
+
+    return res.status(200).json({ data: applicants, token });
+  } catch (error) {
+    console.error("Error fetching accepted applicants:", error);
+    return res.status(500).json({ success: false, message: "Failed to fetch accepted applicants.", token });
+  }
+};
 
 
 export const updateApplicationStatus = async (req: Request, res: Response) => {
