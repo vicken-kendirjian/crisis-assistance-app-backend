@@ -1,6 +1,6 @@
 import express, {Request,Response,NextFunction} from 'express';
 import { AuthorizeAdmin, AuthorizeUser } from '../middlewares/AuthMiddleware';
-import { adminDeleteUserAccount, deleteVolunteerById, deleteDangerZoneByCoordinates,getAllUsers, getAdminAcceptedApplicants, getPendingApplicants, setDangerZone, updateApplicationStatus } from '../controllers/AdminController';
+import { getUserInfoById, adminDeleteUserAccount, deleteVolunteerById, deleteDangerZoneByCoordinates,getAllUsers, getAdminAcceptedApplicants, getPendingApplicants, setDangerZone, updateApplicationStatus } from '../controllers/AdminController';
 import { getUserConnections } from '../controllers/SocialController';
 import { getAcceptedApplicants } from '../controllers/VolunteerController';
 
@@ -19,6 +19,7 @@ router.post('/delete-danger-zone', deleteDangerZoneByCoordinates)
 router.post('/get-user-connections', getUserConnections)
 router.delete('/volunteers/:volunteerId', deleteVolunteerById);
 router.delete('/delete-user/:userId', adminDeleteUserAccount);
+router.get('/user/:userId', getUserInfoById);
 
 
 

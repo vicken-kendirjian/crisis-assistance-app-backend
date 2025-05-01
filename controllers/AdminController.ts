@@ -230,6 +230,44 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
       console.error('Error deleting user by admin:', err);
       return res.status(500).json({ msg: 'Server error', token });
     }
-  };
-  
-  
+  }
+
+export const getUserInfoById = async (req: Request, res: Response) => {
+  const token = req.nat;
+  const { userId } = req.params;
+
+  try {
+    // Fetch basic user info
+    const user = await User.findById(userId).select('name lastname phone bloodType');
+
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found', token });
+    }
+
+    // Check if user is a volunteer
+    const volunteer = await Volunteer.findOne({ userId });
+
+    // Construct response data
+    const data: any = {
+      name: user.name,
+      lastname: user.lastname,
+      phone: user.phone,
+      bloodType: user.bloodType,
+    };
+
+    if (volunteer) {
+      data.volunteer = {
+        title: volunteer.title,
+        description: volunteer.description,
+        contactDetails: volunteer.contactDetails,
+        service: volunteer.service,
+        status: volunteer.status,
+      };
+    }
+
+    return res.status(200).json({ data, token });
+  } catch (error) {
+    console.error("Error fetching user info:", error);
+    return res.status(500).json({ msg: 'Server error', token });
+  }
+};
