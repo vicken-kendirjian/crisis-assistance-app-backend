@@ -37,8 +37,7 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
     const userId = req.userId;
     const token = req.nat;
     try {
-      const { applicationId } = req.params; // ID of the volunteer application
-      const { status } = req.body; // New status ('accepted' or 'rejected')
+      const { status, applicationId } = req.body; // New status ('accepted' or 'rejected')
   
       // Validate status input
       if (!["accepted", "rejected"].includes(status)) {
