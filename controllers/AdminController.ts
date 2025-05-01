@@ -1,6 +1,6 @@
 import express, {Request,Response,NextFunction} from 'express';
 import { validationResult } from 'express-validator';
-import { Volunteer, User, DangerZone  } from '../models';
+import { Volunteer, ChatLog, User, DangerZone  } from '../models';
 
 
 export const getPendingApplicants = async (req: Request, res: Response) => {
@@ -167,3 +167,69 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
       return res.status(500).json({ msg: 'Server error', token });
     }
   };
+
+
+  export const deleteVolunteerById = async (req: Request, res: Response) => {
+    const token = req.nat;
+    const { volunteerId } = req.params;
+  
+    try {
+      if (!volunteerId) {
+        return res.status(400).json({ success: false, message: "volunteerId parameter is required.", token });
+      }
+  
+      const deletedVolunteer = await Volunteer.findByIdAndDelete(volunteerId);
+  
+      if (!deletedVolunteer) {
+        return res.status(404).json({ success: false, message: "Volunteer not found.", token });
+      }
+  
+      return res.status(200).json({ success: true, message: "Volunteer deleted successfully.", data: deletedVolunteer, token });
+    } catch (error) {
+      console.error("Error deleting volunteer:", error);
+      return res.status(500).json({ success: false, message: "Failed to delete volunteer.", token });
+    }
+  };
+
+
+
+  export const adminDeleteUserAccount = async (req: Request, res: Response) => {
+    const token = req.nat;
+    const { userId } = req.params;
+  
+    try {
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found', token });
+      }
+  
+      // Remove this user from other users' "connectedUsers"
+      await User.updateMany(
+        { connectedUsers: userId },
+        { $pull: { connectedUsers: userId } }
+      );
+  
+      // Remove this user from other users' "connections"
+      await User.updateMany(
+        { 'connections.senderId': userId },
+        { $pull: { connections: { senderId: userId } } }
+      );
+  
+      // Delete related volunteer entries
+      await Volunteer.deleteMany({ userId });
+  
+      // Delete related chat logs
+      await ChatLog.deleteMany({ userId });
+  
+      // Delete the user
+      await User.findByIdAndDelete(userId);
+  
+      return res.status(200).json({ msg: 'User account deleted by admin successfully.', token });
+    } catch (err) {
+      console.error('Error deleting user by admin:', err);
+      return res.status(500).json({ msg: 'Server error', token });
+    }
+  };
+  
+  
