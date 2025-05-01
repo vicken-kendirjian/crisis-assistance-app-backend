@@ -18,7 +18,7 @@ router.post('/set-danger-zone', setDangerZone)
 router.post('/delete-danger-zone', deleteDangerZoneByCoordinates)
 router.post('/get-user-connections', getUserConnections)
 router.delete('/volunteers/:volunteerId', deleteVolunteerById);
-router.delete('/admin/delete-user/:userId', adminDeleteUserAccount);
+router.delete('/delete-user/:userId', adminDeleteUserAccount);
 
 
 
