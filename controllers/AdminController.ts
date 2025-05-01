@@ -18,7 +18,7 @@ export const getPendingApplicants = async (req: Request, res: Response) => {
 };
 
 
-export const getAcceptedApplicants = async (req: Request, res: Response) => {
+export const getAdminAcceptedApplicants = async (req: Request, res: Response) => {
   const userId = req.userId;
   const token = req.nat;
 
