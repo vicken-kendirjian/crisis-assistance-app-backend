@@ -1,12 +1,12 @@
 import express, {Request,Response,NextFunction} from 'express';
-import { AuthorizeUser } from '../middlewares/AuthMiddleware';
+import { AuthorizeAdmin, AuthorizeUser } from '../middlewares/AuthMiddleware';
 import { deleteDangerZoneByCoordinates, getAllApplicants, getAllUsers, setDangerZone, updateApplicationStatus } from '../controllers/AdminController';
 import { getUserConnections } from '../controllers/SocialController';
 
 const router = express.Router();
 
 
-router.use(AuthorizeUser); // First middleware
+router.use(AuthorizeAdmin); // First middleware
 
 
 router.get('/all-applicants', getAllApplicants)
