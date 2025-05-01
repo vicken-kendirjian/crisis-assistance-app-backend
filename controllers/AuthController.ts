@@ -97,7 +97,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
 
 
 export const userLogin = async (req: Request, res: Response) => {
-  const { phone, password, platform } = <UserLogin>req.body; // Assuming phone and password are passed in the request body
+  const { phone, password} = <UserLogin>req.body; // Assuming phone and password are passed in the request body
 
   try {
 
@@ -118,12 +118,7 @@ export const userLogin = async (req: Request, res: Response) => {
       return res.status(401).json({ msg: 'Invalid credentials' });
     }
 
-    // Ensure platform matches
-    if (platform === 'web' && !user.isAdmin) {
-      return res.status(403).send({ error: 'Only admins can log in on the web' });
-    } else if (platform === 'mobile' && user.isAdmin) {
-      return res.status(403).send({ error: 'Admins cannot log in on mobile' });
-    }
+    
 
     //Generate access token and refresh token
     const payload : UserPayload = {

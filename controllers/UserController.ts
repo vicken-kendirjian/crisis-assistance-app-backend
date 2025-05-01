@@ -108,3 +108,61 @@ export const getUserProfile = async (req: Request, res: Response) => {
       return res.status(500).json({ msg: 'Server error', token });
     }
   };
+
+  export const adminDeleteUserAccount = async (req: Request, res: Response) => {
+    const token = req.nat;
+    const { targetUserId } = req.body; // The user to be deleted
+  
+    try {
+      const user = await User.findById(targetUserId);
+  
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found', token });
+      }
+  
+      // Remove this user from other users' "connectedUsers"
+      await User.updateMany(
+        { connectedUsers: targetUserId },
+        { $pull: { connectedUsers: targetUserId } }
+      );
+  
+      // Remove this user from other users' "connections"
+      await User.updateMany(
+        { 'connections.senderId': targetUserId },
+        { $pull: { connections: { senderId: targetUserId } } }
+      );
+  
+      // Delete volunteer entry if it exists
+      await Volunteer.deleteMany({ userId: targetUserId });
+  
+      // Delete all chat sessions for this user
+      await ChatLog.deleteMany({ userId: targetUserId });
+  
+      // Finally, delete the user
+      await User.findByIdAndDelete(targetUserId);
+  
+      return res.status(200).json({ msg: 'User account deleted by admin successfully', token });
+    } catch (err) {
+      console.error("Admin error deleting user:", err);
+      return res.status(500).json({ msg: 'Server error', token });
+    }
+  };
+
+
+  export const getUserInfoById = async (req: Request, res: Response) => {
+    const token = req.nat;
+    const { userId } = req.params;
+  
+    try {
+      const user = await User.findById(userId).select('name lastname phone bloodType');
+  
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found', token });
+      }
+  
+      return res.status(200).json({ data: user, token });
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+      return res.status(500).json({ msg: 'Server error', token });
+    }
+  };
