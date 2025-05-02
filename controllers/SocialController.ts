@@ -145,30 +145,33 @@ export const handleConnectionRequest = async (req: Request, res: Response) => {
 
 
 export const getUserConnections = async (req: Request, res: Response) => {
-    const userId = req.userId; 
-    const token = req.nat
-    try {
-      // Find the user by their ID
-      const user = await User.findById(userId);
-  
-      if (!user) {
-        return res.status(404).json({ msg: 'User not found', token });
-      }
-  
-      // Filter connections based on their status
-      const acceptedConnections = user.connections.filter(c => c.status === 'accepted');
-      const pendingConnections = user.connections.filter(c => c.status === 'pending');
-  
-      // Send the response back to the client
-      return res.status(200).json({
-        accepted: acceptedConnections,
-        pending: pendingConnections,
-        token 
-      });
-    } catch (err) {
-      return res.status(500).json({ msg: 'Server error', token });
+  const userId = req.userId;  // The authenticated user's ID
+  const token = req.nat;
+  const { toDeleteId } = req.body;  // The user ID to get connections for
+
+  try {
+    // Find the user by their ID (toDeleteId)
+    const user = await User.findById(toDeleteId);
+
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found', token });
     }
+
+    // Filter connections based on their status
+    const acceptedConnections = user.connections.filter(c => c.status === 'accepted');
+    const pendingConnections = user.connections.filter(c => c.status === 'pending');
+
+    // Send the response back to the client
+    return res.status(200).json({
+      accepted: acceptedConnections,
+      pending: pendingConnections,
+      token
+    });
+  } catch (err) {
+    return res.status(500).json({ msg: 'Server error', token });
+  }
 };
+
 
 export const removeConnection = async (req: Request, res: Response) => {
   const userId = req.userId;
