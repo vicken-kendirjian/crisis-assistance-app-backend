@@ -24,7 +24,7 @@ export const AuthorizeUser = async (req: Request, res: Response, next: NextFunct
   const user = await User.findById(userId);
 
   if(accessToken!==user?.accessToken){
-    return res.status(500).json({msg: "Dear malicious user get shit on"})
+    return res.status(500).json({msg: "Dear malicious, be better"})
   }
 
   try {

@@ -190,7 +190,7 @@ export const removeConnection = async (req: Request, res: Response) => {
       return res.status(404).json({ msg: 'Target user not found', token });
     }
 
-    // === Remove targetUser from user's connections and connectedUsers ===
+    
     user.connections = user.connections.filter(
       (connection) => connection.senderPhone !== targetPhone
     );
@@ -201,7 +201,7 @@ export const removeConnection = async (req: Request, res: Response) => {
 
     await user.save();
 
-    // === Remove user from targetUser's connections and connectedUsers ===
+    
     targetUser.connections = targetUser.connections.filter(
       (connection) => connection.senderPhone !== user.phone
     );
