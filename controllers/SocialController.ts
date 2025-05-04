@@ -147,11 +147,10 @@ export const handleConnectionRequest = async (req: Request, res: Response) => {
 export const getUserConnections = async (req: Request, res: Response) => {
   const userId = req.userId;  // The authenticated user's ID
   const token = req.nat;
-  const { toDeleteId } = req.body;  // The user ID to get connections for
 
   try {
     // Find the user by their ID (toDeleteId)
-    const user = await User.findById(toDeleteId);
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ msg: 'User not found', token });
