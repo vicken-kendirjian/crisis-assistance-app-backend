@@ -143,11 +143,11 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
 
   export const getUserConnectionsByAdmin = async (req: Request, res: Response) => {
     const token = req.nat;
-    const { userId } = req.params; // user ID passed by admin
+    const { targetUserId } = req.body; // user ID passed by admin
   
     try {
       // Find the user by their ID
-      const user = await User.findById(userId);
+      const user = await User.findById(targetUserId);
   
       if (!user) {
         return res.status(404).json({ msg: 'User not found', token });
